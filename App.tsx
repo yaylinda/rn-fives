@@ -31,8 +31,8 @@ export default function App() {
       <StatusBar style="auto" />
       <Game />
       <View style={styles.buttonBar}>
-        <Button title="New Game"></Button>
-        <Button title="See High Scores"></Button>
+        <Button title="New Game" onPress={openNewGameModeSelectionDialog} />
+        <Button title="See High Scores" onPress={openHighScoresDialog} />
       </View>
     </View>
   );

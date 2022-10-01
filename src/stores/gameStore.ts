@@ -13,8 +13,8 @@ import {
   initIntermediateBoard,
   isGameOver,
 } from "../utils/utils";
-import { v4 as uuidv4 } from "uuid";
 import useGameModeStore from "./gameModeStore";
+import uuid from "react-native-uuid";
 
 export interface GameState {
   hasStarted: boolean;
@@ -48,7 +48,7 @@ const useGameStore = create<GameState>()((set, get) => ({
   generated: {},
   nextValue: 0,
   lastMoveDirection: null,
-  currentGameId: uuidv4(),
+  currentGameId: uuid.v4() as string,
 
   /**
    *
@@ -160,7 +160,7 @@ const useGameStore = create<GameState>()((set, get) => ({
         merged: {},
         generated: {},
         nextValue: generateTileValue({}, {}, 0),
-        currentGameId: uuidv4(),
+        currentGameId: uuid.v4() as string,
       };
       AsyncStorage.setItem(
         LOCAL_STORAGE_GAME_STATE,

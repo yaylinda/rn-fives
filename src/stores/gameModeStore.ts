@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import create from "zustand";
-
 import { GameMode } from "../types";
 import { GAME_MODE } from "../utils/constants";
 

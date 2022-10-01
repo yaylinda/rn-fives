@@ -4,7 +4,7 @@ import {
   LOCAL_STORAGE_CLIENT_ID,
   LOCAL_STORAGE_USERNAME,
 } from "../utils/constants";
-import { v4 as uuidv4 } from "uuid";
+import uuid from "react-native-uuid";
 
 interface UserState {
   username: string;
@@ -26,7 +26,7 @@ const useUserStore = create<UserState>()((set, get) => ({
     const username = (await AsyncStorage.getItem(LOCAL_STORAGE_USERNAME)) ?? "";
     set(() => {
       if (!clientId) {
-        clientId = uuidv4();
+        clientId = uuid.v4() as string;
         AsyncStorage.setItem(LOCAL_STORAGE_CLIENT_ID, clientId);
       }
       return { clientId, username };
