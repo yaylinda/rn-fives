@@ -1,4 +1,4 @@
-import { FlashOnOutlined } from "@mui/icons-material";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import create from "zustand";
 import { HighScore, HighScoreDoc } from "../types";
 import { LAST_POSTED_GAME_ID } from "../utils/constants";
@@ -32,16 +32,19 @@ const useHighScoresStore = create<HighScoresState>()((set, get) => ({
   fetching: false,
   highScores: [],
   lastPostedGameId: null,
-  init: () => set((state) => {
-    const lastPostedGameId = window.localStorage.getItem(LAST_POSTED_GAME_ID);
-    if (lastPostedGameId) {
-      return {
-        ...state,
-        lastPostedGameId,
-      };
-    }
-    return state;
-  }),
+
+  init: async () => {
+    const lastPostedGameId = await AsyncStorage.getItem(LAST_POSTED_GAME_ID);
+    set((state) => {
+      if (lastPostedGameId) {
+        return {
+          ...state,
+          lastPostedGameId,
+        };
+      }
+      return state;
+    });
+  },
   openHighScoresDialog: () =>
     set((state) => ({ ...state, showHighScoresDialog: true })),
   closeHighScoresDialog: () =>
@@ -56,14 +59,14 @@ const useHighScoresStore = create<HighScoresState>()((set, get) => ({
     set((state) => ({ ...state, posting: true, successfullyPosted: false })),
   setPostedSuccess: (gameId: string) =>
     set((state) => {
-      window.localStorage.setItem(LAST_POSTED_GAME_ID, gameId);
+      AsyncStorage.setItem(LAST_POSTED_GAME_ID, gameId);
       return {
         ...state,
         posting: false,
         successfullyPosted: true,
         lastPostedGameId: gameId,
         showPostScoreDialog: false,
-      }
+      };
     }),
   setPostedFailed: () =>
     set((state) => ({
@@ -74,11 +77,12 @@ const useHighScoresStore = create<HighScoresState>()((set, get) => ({
       showPostScoreDialog: false,
     })),
   startFetchingHighScores: () => set((state) => ({ ...state, fetching: true })),
-  setHighScores: (highScores: HighScoreDoc[]) => set((state) => ({
-    ...state,
-    fetching: false,
-    highScores,
-  })),
+  setHighScores: (highScores: HighScoreDoc[]) =>
+    set((state) => ({
+      ...state,
+      fetching: false,
+      highScores,
+    })),
 }));
 
 export default useHighScoresStore;

@@ -3,4 +3,5 @@ export const colors = Object.freeze({
   LIGHT: "#EEEEEE",
   DARK: "#222831",
   ACCENT: "#C5E99B",
+  BACKGROUND: "#393E46",
 });

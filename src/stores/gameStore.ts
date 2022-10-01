@@ -1,14 +1,18 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import create from "zustand";
 import { TileData, MoveDirection, TileLocations } from "../types";
-import {
-  LOCAL_STORAGE_GAME_STATE,
-} from "../utils/constants";
+import { LOCAL_STORAGE_GAME_STATE } from "../utils/constants";
 import { getCoordinatesForNewTile } from "../utils/coordinates";
 import { generateTileValue } from "../utils/generator";
 import { convertBoardToLocations } from "../utils/locations";
 import { mergeTiles } from "../utils/merger";
 import { moveTiles } from "../utils/mover";
-import { getBoardConfig, initBoard, initIntermediateBoard, isGameOver } from "../utils/utils";
+import {
+  getBoardConfig,
+  initBoard,
+  initIntermediateBoard,
+  isGameOver,
+} from "../utils/utils";
 import { v4 as uuidv4 } from "uuid";
 import useGameModeStore from "./gameModeStore";
 
@@ -99,7 +103,11 @@ const useGameStore = create<GameState>()((set, get) => ({
       const updatedState = {
         ...state,
         board: [...board],
-        tileLocations: convertBoardToLocations(board, intermediateBoard, config),
+        tileLocations: convertBoardToLocations(
+          board,
+          intermediateBoard,
+          config
+        ),
         isGameOver: gameOver,
         showGameOverDialog: gameOver,
         moves: moves,
@@ -111,7 +119,7 @@ const useGameStore = create<GameState>()((set, get) => ({
           : state.nextValue,
         lastMoveDirection: dir,
       };
-      window.localStorage.setItem(
+      AsyncStorage.setItem(
         LOCAL_STORAGE_GAME_STATE,
         JSON.stringify(updatedState)
       );
@@ -124,7 +132,6 @@ const useGameStore = create<GameState>()((set, get) => ({
    */
   newGame: () =>
     set((state) => {
-
       const config = getBoardConfig(useGameModeStore.getState().gameMode);
 
       const board = initBoard(config);
@@ -140,7 +147,11 @@ const useGameStore = create<GameState>()((set, get) => ({
       const updatedState = {
         ...state,
         board: board,
-        tileLocations: convertBoardToLocations(board, initIntermediateBoard(config), config),
+        tileLocations: convertBoardToLocations(
+          board,
+          initIntermediateBoard(config),
+          config
+        ),
         hasStarted: true,
         isGameOver: false,
         showGameOverDialog: false,
@@ -151,7 +162,7 @@ const useGameStore = create<GameState>()((set, get) => ({
         nextValue: generateTileValue({}, {}, 0),
         currentGameId: uuidv4(),
       };
-      window.localStorage.setItem(
+      AsyncStorage.setItem(
         LOCAL_STORAGE_GAME_STATE,
         JSON.stringify(updatedState)
       );
@@ -162,11 +173,11 @@ const useGameStore = create<GameState>()((set, get) => ({
    *
    * @returns
    */
-  restoreState: () =>
+  restoreState: async () => {
+    const restoredStateStr = await AsyncStorage.getItem(
+      LOCAL_STORAGE_GAME_STATE
+    );
     set((state) => {
-      const restoredStateStr = window.localStorage.getItem(
-        LOCAL_STORAGE_GAME_STATE
-      );
       if (restoredStateStr) {
         return {
           ...state,
@@ -175,7 +186,8 @@ const useGameStore = create<GameState>()((set, get) => ({
       } else {
         return { ...state };
       }
-    }),
+    });
+  },
 
   /**
    *

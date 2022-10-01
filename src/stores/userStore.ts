@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import create from "zustand";
 import {
   LOCAL_STORAGE_CLIENT_ID,
@@ -20,16 +21,17 @@ const useUserStore = create<UserState>()((set, get) => ({
    *
    * @returns
    */
-  init: () =>
+  init: async () => {
+    let clientId = await AsyncStorage.getItem(LOCAL_STORAGE_CLIENT_ID);
+    const username = (await AsyncStorage.getItem(LOCAL_STORAGE_USERNAME)) ?? "";
     set(() => {
-      let clientId = window.localStorage.getItem(LOCAL_STORAGE_CLIENT_ID);
       if (!clientId) {
         clientId = uuidv4();
-        window.localStorage.setItem(LOCAL_STORAGE_CLIENT_ID, clientId);
+        AsyncStorage.setItem(LOCAL_STORAGE_CLIENT_ID, clientId);
       }
-      const username = window.localStorage.getItem(LOCAL_STORAGE_USERNAME) ?? '';
       return { clientId, username };
-    }),
+    });
+  },
 
   /**
    *
@@ -38,7 +40,7 @@ const useUserStore = create<UserState>()((set, get) => ({
    */
   setUsername: (username: string) =>
     set((state) => {
-      window.localStorage.setItem(LOCAL_STORAGE_USERNAME, username);
+      AsyncStorage.setItem(LOCAL_STORAGE_USERNAME, username);
       return { ...state, username };
     }),
 }));

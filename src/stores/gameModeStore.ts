@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import create from "zustand";
 
 import { GameMode } from "../types";
@@ -6,10 +7,10 @@ import { GAME_MODE } from "../utils/constants";
 export const DEFAULT_GAME_MODE = GameMode.FIVE_BY_FIVE;
 
 interface GameModeState {
-  gameMode: GameMode,
+  gameMode: GameMode;
   showNewGameModeSelectionDialog: boolean;
-  init: () => void,
-  updateMode: (mode: GameMode) => void,
+  init: () => void;
+  updateMode: (mode: GameMode) => void;
   openNewGameModeSelectionDialog: () => void;
   closeNewGameModeSelectionDialog: () => void;
 }
@@ -19,40 +20,44 @@ const useGameModeStore = create<GameModeState>()((set, get) => ({
   showNewGameModeSelectionDialog: false,
 
   /**
-   * 
-   * @param gameMode 
-   * @returns 
+   *
+   * @returns
    */
-  updateMode: (gameMode: GameMode) => set((state) => {
-    window.localStorage.setItem(GAME_MODE, gameMode);
-    return { ...state, gameMode }
-  }),
+  init: async () => {
+    const gameMode = await AsyncStorage.getItem(GAME_MODE);
 
-  /**
-   * 
-   * @returns 
-   */
-  init: () => set((state) => {
-    const gameMode = window.localStorage.getItem(GAME_MODE);
-    if (gameMode) {
+    set((state) => {
+      if (gameMode) {
+        return {
+          ...state,
+          gameMode: GameMode[gameMode as keyof typeof GameMode],
+        };
+      }
+
+      AsyncStorage.setItem(GAME_MODE, DEFAULT_GAME_MODE);
+
       return {
         ...state,
-        gameMode: GameMode[gameMode as keyof typeof GameMode]
-      }
-    }
-
-    window.localStorage.setItem(GAME_MODE, DEFAULT_GAME_MODE);
-
-    return {
-      ...state,
-      gameMode: DEFAULT_GAME_MODE,
-    };
-  }),
+        gameMode: DEFAULT_GAME_MODE,
+      };
+    });
+  },
 
   /**
-  *
-  * @returns
-  */
+   *
+   * @param gameMode
+   * @returns
+   */
+  updateMode: (gameMode: GameMode) =>
+    set((state) => {
+      AsyncStorage.setItem(GAME_MODE, gameMode);
+      return { ...state, gameMode };
+    }),
+
+  /**
+   *
+   * @returns
+   */
   openNewGameModeSelectionDialog: () =>
     set((state) => ({ ...state, showNewGameModeSelectionDialog: true })),
 

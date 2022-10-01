@@ -18,12 +18,24 @@ export default function GameBoard() {
       <View style={styles.grid}>
         {Array.from(Array(numRows)).map((_, r) => (
           <View key={`row_${r}`} style={styles.row}>
-            {Array.from(Array(numCols)).map((_, c) => (
-              <View
-                key={`row_${r}_col_${c}`}
-                style={[styles.cell, { height: tileSize, width: tileSize }]}
-              ></View>
-            ))}
+            {Array.from(Array(numCols)).map((_, c) => {
+              const isLastRow = r === numRows - 1;
+              const isLastCol = c === numCols - 1;
+              return (
+                <View
+                  key={`row_${r}_col_${c}`}
+                  style={[
+                    styles.cell,
+                    {
+                      height: tileSize,
+                      width: tileSize,
+                      marginRight: isLastCol ? 0 : tileSpacing,
+                      marginBottom: isLastRow ? 0 : tileSpacing,
+                    },
+                  ]}
+                ></View>
+              );
+            })}
           </View>
         ))}
       </View>
