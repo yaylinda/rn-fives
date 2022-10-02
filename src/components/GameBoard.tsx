@@ -4,9 +4,13 @@ import { colors } from "../theme";
 import Tile from "./Tile";
 import { getBoardConfig } from "../utils/utils";
 import { MoveDirection } from "../types";
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+  Directions,
+  Gesture,
+  GestureDetector,
+} from "react-native-gesture-handler";
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -19,42 +23,40 @@ export default function GameBoard() {
   const { numRows, numCols, tileSize, tileSpacing } = getBoardConfig(gameMode);
   const spacing = `${tileSpacing}px`;
 
-  const isPressed = useSharedValue(false);
-  const offset = useSharedValue({ x: 0, y: 0 });
-  const animatedStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { translateX: offset.value.x },
-        { translateY: offset.value.y },
-        { scale: withSpring(isPressed.value ? 1.2 : 1) },
-      ],
-      backgroundColor: isPressed.value ? "yellow" : "blue",
-    };
-  });
-  const start = useSharedValue({ x: 0, y: 0 });
+  const gestures = useMemo(() => {
+    const up = Gesture.Fling()
+      .direction(Directions.UP)
+      .runOnJS(true)
+      .onStart(() => {
+        move(MoveDirection.UP);
+      });
 
-  const swipe = Gesture.Pan()
-    .onBegin(() => {
-      isPressed.value = true;
-    })
-    .onUpdate((e) => {
-      offset.value = {
-        x: e.translationX + start.value.x,
-        y: e.translationY + start.value.y,
-      };
-    })
-    .onEnd(() => {
-      start.value = {
-        x: offset.value.x,
-        y: offset.value.y,
-      };
-    })
-    .onFinalize(() => {
-      isPressed.value = false;
-    });
+    const down = Gesture.Fling()
+      .direction(Directions.DOWN)
+      .runOnJS(true)
+      .onStart(() => {
+        move(MoveDirection.DOWN);
+      });
+
+    const left = Gesture.Fling()
+      .direction(Directions.LEFT)
+      .runOnJS(true)
+      .onStart(() => {
+        move(MoveDirection.LEFT);
+      });
+
+    const right = Gesture.Fling()
+      .direction(Directions.RIGHT)
+      .runOnJS(true)
+      .onStart(() => {
+        move(MoveDirection.RIGHT);
+      });
+
+    return [up, down, left, right];
+  }, []);
 
   return (
-    <GestureDetector gesture={swipe}>
+    <GestureDetector gesture={Gesture.Race(...gestures)}>
       <View style={styles.container}>
         <View style={styles.grid}>
           {Array.from(Array(numRows)).map((_, r) => (
@@ -83,9 +85,7 @@ export default function GameBoard() {
         {Object.values(tileLocations)
           .reverse()
           .map((tile) => {
-            return (
-              <Tile key={tile.tile.id} {...tile} styles={animatedStyles} />
-            );
+            return <Tile key={tile.tile.id} {...tile} />;
           })}
       </View>
     </GestureDetector>

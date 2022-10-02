@@ -115,7 +115,7 @@ const STYLES: { [key in string]: any } = {
 interface TileProps {
   tile: TileData;
   coordinates: Coordinates;
-  styles: any;
+  // styles: any;
 }
 
 /**
@@ -124,7 +124,7 @@ interface TileProps {
  * @param param0
  * @returns
  */
-function Tile({ tile, coordinates, styles }: TileProps) {
+function Tile({ tile, coordinates }: TileProps) {
   const { id, value, isNew, isMerge } = tile;
   const [scale, setScale] = useState(isNew ? 0 : 1);
   const { gameMode } = useGameModeStore();
@@ -175,7 +175,6 @@ function Tile({ tile, coordinates, styles }: TileProps) {
           // transitionProperty: "top, left, transform",
           // transitionDuration: "250ms, 250ms, 100ms",
         },
-        styles,
       ]}
     >
       <Text>{value}</Text>
