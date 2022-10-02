@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
 import { Button, StyleSheet, View } from "react-native";
 import Game from "./src/components/Game";
+import NewGameModeSelectionDialog from "./src/dialogs/NewGameModeSelectionDialog";
 import useGameModeStore from "./src/stores/gameModeStore";
 import useGameStore from "./src/stores/gameStore";
 import useHighScoresStore from "./src/stores/highScoresStore";
@@ -34,6 +35,7 @@ export default function App() {
         <Button title="New Game" onPress={openNewGameModeSelectionDialog} />
         <Button title="See High Scores" onPress={openHighScoresDialog} />
       </View>
+      <NewGameModeSelectionDialog />
     </View>
   );
 }

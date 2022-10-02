@@ -9,7 +9,7 @@ import {
 } from "../utils/constants";
 import useGameModeStore from "../stores/gameModeStore";
 import { getBoardConfig } from "../utils/utils";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 
 /**
  * Font sizes
@@ -133,21 +133,21 @@ function Tile({ tile, coordinates }: TileProps) {
   const left =
     coordinates.col * config.tileSize + coordinates.col * config.tileSpacing;
 
-  useEffect(() => {
-    if (isMerge) {
-      setScale(1.1);
-      setTimeout(() => setScale(1), 100);
-    }
-  }, [isMerge]);
+  // useEffect(() => {
+  //   if (isMerge) {
+  //     setScale(1.1);
+  //     setTimeout(() => setScale(1), 100);
+  //   }
+  // }, [isMerge]);
 
-  useEffect(() => {
-    if (isNew) {
-      setTimeout(() => {
-        setScale(1.1);
-        setTimeout(() => setScale(1), 100);
-      }, 100);
-    }
-  }, [isNew]);
+  // useEffect(() => {
+  //   if (isNew) {
+  //     setTimeout(() => {
+  //       setScale(1.1);
+  //       setTimeout(() => setScale(1), 100);
+  //     }, 100);
+  //   }
+  // }, [isNew]);
 
   // TODO - fix animation when moving down or right
 
@@ -169,13 +169,13 @@ function Tile({ tile, coordinates }: TileProps) {
           position: "absolute",
           top,
           left,
-          transform: `scale(${scale})`,
-          transitionProperty: "top, left, transform",
-          transitionDuration: "250ms, 250ms, 100ms",
+          // transform: `scale(${scale})`,
+          // transitionProperty: "top, left, transform",
+          // transitionDuration: "250ms, 250ms, 100ms",
         },
       ]}
     >
-      {value}
+      <Text>{value}</Text>
     </View>
   );
 }

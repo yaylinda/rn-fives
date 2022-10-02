@@ -33,7 +33,7 @@ export default function GameBoard() {
                       marginBottom: isLastRow ? 0 : tileSpacing,
                     },
                   ]}
-                ></View>
+                />
               );
             })}
           </View>
