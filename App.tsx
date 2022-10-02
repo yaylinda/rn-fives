@@ -8,12 +8,18 @@ import useGameStore from "./src/stores/gameStore";
 import useHighScoresStore from "./src/stores/highScoresStore";
 import useUserStore from "./src/stores/userStore";
 import { colors } from "./src/theme";
+import { Snackbar } from "react-native-paper";
+import HighScoresDialog from "./src/dialogs/HighScoresDialog";
 
 export default function App() {
   const { hasStarted, isGameOver, move, restoreState } = useGameStore();
   const { init: initUserStore } = useUserStore();
-  const { init: initHighScoresStore, openHighScoresDialog } =
-    useHighScoresStore();
+  const {
+    init: initHighScoresStore,
+    openHighScoresDialog,
+    resetPosting,
+    successfullyPosted,
+  } = useHighScoresStore();
   const {
     gameMode,
     init: initModeStore,
@@ -36,6 +42,17 @@ export default function App() {
         <Button title="See High Scores" onPress={openHighScoresDialog} />
       </View>
       <NewGameModeSelectionDialog />
+      <HighScoresDialog />
+      <Snackbar
+        visible={successfullyPosted}
+        onDismiss={resetPosting}
+        action={{
+          label: "Scores",
+          onPress: openHighScoresDialog,
+        }}
+      >
+        Successfully posted high score!
+      </Snackbar>
     </View>
   );
 }

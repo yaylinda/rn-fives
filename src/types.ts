@@ -51,6 +51,7 @@ export interface HighScore {
 }
 
 export interface HighScoreDoc extends HighScore {
+  timestamp: number;
 }
 
 export interface GameBoardConfig {

@@ -1,18 +1,8 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
-import DialogTransition from "./DialogTransition";
 import useGameStore from "../stores/gameStore";
 import useHighScoresStore from "../stores/highScoresStore";
 import { colors } from "../theme";
-import LoadingButton from "@mui/lab/LoadingButton";
+import { Dialog, Button, Text } from "react-native-paper";
+import { View } from "react-native";
 
 function GameOverDialog() {
   const {
@@ -38,68 +28,33 @@ function GameOverDialog() {
   // TOOD (bug) - dialog pops up on refresh of page
   // TODO - show bar chart or some cool visualization of merged/generated
   return (
-    <Dialog
-      open={showGameOverDialog}
-      TransitionComponent={DialogTransition}
-      keepMounted
-      onClose={closeGameOverDialog}
-    >
-      <DialogTitle sx={{ color: colors.LIGHT }}>Game Over</DialogTitle>
-      <DialogContent>
-        <Box
-          sx={{
-            color: colors.LIGHT,
-            display: "flex",
-            flexDirection: "row",
-            gap: 1,
-            flexWrap: 'wrap',
-          }}
-        >
-          <DialogContentText sx={{ color: colors.LIGHT }}>
-            You scored
-          </DialogContentText>
-          <DialogContentText sx={{ color: colors.ACCENT }}>
-            {score}
-          </DialogContentText>
-          <DialogContentText sx={{ color: colors.LIGHT }}>
-            points
-          </DialogContentText>
-          <DialogContentText sx={{ color: colors.LIGHT }}>in</DialogContentText>
-          <DialogContentText sx={{ color: colors.ACCENT }}>
-            {moves}
-          </DialogContentText>
-          <DialogContentText sx={{ color: colors.LIGHT }}>
-            moves
-          </DialogContentText>
-        </Box>
-        {successfullyPosted && (
-          <Alert
-            sx={{ marginTop: 3 }}
-            action={
-              <Button
-                onClick={openHighScoresDialog}
-                color="inherit"
-                size="small"
-              >
-                Scores
-              </Button>
-            }
-          >
-            Success!
-          </Alert>
-        )}
-      </DialogContent>
-      <DialogActions sx={{ justifyContent: "space-between" }}>
-        <LoadingButton
+    <Dialog visible={showGameOverDialog} onDismiss={closeGameOverDialog}>
+      <Dialog.Title style={{ color: colors.ACCENT }}>New Game?</Dialog.Title>
+      <Dialog.Content
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+        }}
+      >
+        <Text style={{ color: colors.LIGHT }}>You scored</Text>
+        <Text style={{ color: colors.ACCENT }}>{score}</Text>
+        <Text style={{ color: colors.LIGHT }}>points</Text>
+        <Text style={{ color: colors.LIGHT }}>in</Text>
+        <Text style={{ color: colors.ACCENT }}>{moves}</Text>
+        <Text style={{ color: colors.LIGHT }}>moves</Text>
+      </Dialog.Content>
+      <Dialog.Actions style={{ justifyContent: "space-between" }}>
+        <Button
           loading={posting}
-          onClick={() => {
+          onPress={() => {
             canPostHighScore ? openPostScoreDialog() : closeGameOverDialog();
           }}
         >
           {canPostHighScore ? "Post" : "Close"}
-        </LoadingButton>
+        </Button>
         <Button
-          onClick={() => {
+          onPress={() => {
             resetPosting();
             newGame();
           }}
@@ -107,13 +62,13 @@ function GameOverDialog() {
           New Game
         </Button>
         <Button
-          onClick={() => {
+          onPress={() => {
             /* TODO - implement */
           }}
         >
           Share
         </Button>
-      </DialogActions>
+      </Dialog.Actions>
     </Dialog>
   );
 }
