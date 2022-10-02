@@ -1,24 +1,11 @@
-import { LoadingButton } from "@mui/lab";
-import {
-  Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
-  TextField,
-} from "@mui/material";
-import DialogTransition from "./DialogTransition";
 import useHighScoresStore from "../stores/highScoresStore";
 import { colors } from "../theme";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
 import useUserStore from "../stores/userStore";
 import useGameStore from "../stores/gameStore";
 import { HighScore } from "../types";
-import { postHighScore } from "../api/highScores";
 import useGameModeStore from "../stores/gameModeStore";
+import { Dialog, IconButton, Text, TextInput } from "react-native-paper";
+import { View } from "react-native";
 
 function PostHighScoreDialog() {
   const { moves, score, merged, generated, currentGameId } = useGameStore();
@@ -34,7 +21,7 @@ function PostHighScoreDialog() {
   const { gameMode } = useGameModeStore();
 
   /**
-   * 
+   *
    */
   const postScore = async () => {
     const highScore: HighScore = {
@@ -50,7 +37,7 @@ function PostHighScoreDialog() {
 
     try {
       startPosting();
-      await postHighScore(highScore);
+      // await postHighScore(highScore);
       setPostedSuccess(currentGameId);
     } catch (e) {
       setPostedFailed();
@@ -58,76 +45,57 @@ function PostHighScoreDialog() {
   };
 
   /**
-   * 
-   * @param event 
+   *
+   * @param event
    */
-  const onUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value);
+  const onUsernameChange = (value: string) => {
+    setUsername(value);
   };
 
   return (
-    <Dialog
-      open={showPostScoreDialog}
-      TransitionComponent={DialogTransition}
-      keepMounted
-      onClose={closePostScoreDialog}
-    >
-      <DialogTitle sx={{ color: colors.LIGHT }}>Post score?</DialogTitle>
-      <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-        <TextField
+    <Dialog visible={showPostScoreDialog} onDismiss={closePostScoreDialog}>
+      <Dialog.Title style={{ color: colors.LIGHT }}>Post score?</Dialog.Title>
+      <Dialog.Content style={{ display: "flex", flexDirection: "column" }}>
+        <TextInput
           label="Username"
-          variant="standard"
-          focused
           value={username}
-          onChange={onUsernameChange}
+          onChangeText={onUsernameChange}
         />
-        <Box
-          sx={{
+        <View
+          style={{
             display: "flex",
             flexDirection: "row",
             justifyContent: "center",
-            gap: 5,
           }}
         >
-          <Box>
-            <DialogContentText sx={{ color: colors.LIGHT }}>
-              Score
-            </DialogContentText>
-            <DialogContentText
-              sx={{ textAlign: "center", color: colors.LIGHT }}
-            >
+          <View>
+            <Text style={{ color: colors.LIGHT }}>Score</Text>
+            <Text style={{ textAlign: "center", color: colors.LIGHT }}>
               {score}
-            </DialogContentText>
-          </Box>
-          <Box>
-            <DialogContentText sx={{ color: colors.LIGHT }}>
-              Moves
-            </DialogContentText>
-            <DialogContentText
-              sx={{ textAlign: "center", color: colors.LIGHT }}
-            >
+            </Text>
+          </View>
+          <View>
+            <Text style={{ color: colors.LIGHT }}>Moves</Text>
+            <Text style={{ textAlign: "center", color: colors.LIGHT }}>
               {moves}
-            </DialogContentText>
-          </Box>
-        </Box>
-      </DialogContent>
-      <DialogActions sx={{ justifyContent: "space-between" }}>
+            </Text>
+          </View>
+        </View>
+      </Dialog.Content>
+      <Dialog.Actions style={{ justifyContent: "space-between" }}>
         <IconButton
-          sx={{ color: "red" }}
-          onClick={closePostScoreDialog}
+          icon="close"
+          color="red"
+          onPress={closePostScoreDialog}
           disabled={posting}
-        >
-          <CloseIcon fontSize="large" />
-        </IconButton>
-        <LoadingButton
-          sx={{ color: "green" }}
-          onClick={postScore}
+        />
+        <IconButton
+          icon="check"
+          color="green"
+          onPress={postScore}
           disabled={posting}
-          loading={posting}
-        >
-          <CheckIcon fontSize="large" />
-        </LoadingButton>
-      </DialogActions>
+        />
+      </Dialog.Actions>
     </Dialog>
   );
 }

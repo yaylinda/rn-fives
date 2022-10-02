@@ -10,6 +10,8 @@ import useUserStore from "./src/stores/userStore";
 import { colors } from "./src/theme";
 import { Snackbar } from "react-native-paper";
 import HighScoresDialog from "./src/dialogs/HighScoresDialog";
+import GameOverDialog from "./src/dialogs/GameOverDialog";
+import PostHighScoreDialog from "./src/dialogs/PostHighScoreDialog";
 
 export default function App() {
   const { hasStarted, isGameOver, move, restoreState } = useGameStore();
@@ -41,6 +43,8 @@ export default function App() {
         <Button title="New Game" onPress={openNewGameModeSelectionDialog} />
         <Button title="See High Scores" onPress={openHighScoresDialog} />
       </View>
+      <GameOverDialog />
+      <PostHighScoreDialog />
       <NewGameModeSelectionDialog />
       <HighScoresDialog />
       <Snackbar
