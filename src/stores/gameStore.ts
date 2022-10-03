@@ -20,6 +20,7 @@ export interface GameState {
   hasStarted: boolean;
   board: TileData[][];
   tileLocations: TileLocations;
+  prevTileLocations: TileLocations;
   isGameOver: boolean;
   showGameOverDialog: boolean;
   score: number;
@@ -40,6 +41,7 @@ const useGameStore = create<GameState>()((set, get) => ({
   hasStarted: false,
   board: initBoard(getBoardConfig(useGameModeStore.getState().gameMode)),
   tileLocations: {},
+  prevTileLocations: {},
   isGameOver: false,
   showGameOverDialog: false,
   score: 0,
@@ -108,6 +110,7 @@ const useGameStore = create<GameState>()((set, get) => ({
           intermediateBoard,
           config
         ),
+        prevTileLocations: state.tileLocations,
         isGameOver: gameOver,
         showGameOverDialog: gameOver,
         moves: moves,
@@ -152,6 +155,7 @@ const useGameStore = create<GameState>()((set, get) => ({
           initIntermediateBoard(config),
           config
         ),
+        prevTileLocations: {},
         hasStarted: true,
         isGameOver: false,
         showGameOverDialog: false,
@@ -182,6 +186,7 @@ const useGameStore = create<GameState>()((set, get) => ({
         return {
           ...state,
           ...JSON.parse(restoredStateStr),
+          prevTileLocations: {},
         };
       } else {
         return { ...state };

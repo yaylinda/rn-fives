@@ -16,6 +16,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import useGameStore from "../stores/gameStore";
 
 /**
  * Font sizes
@@ -117,10 +118,17 @@ const STYLES: { [key in string]: any } = {
   },
 };
 
+const convertCoordinateToPixel = (
+  coord: number,
+  config: GameBoardConfig
+): number => {
+  return coord * config.tileSize + coord * config.tileSpacing;
+};
+
 interface TileProps {
   tile: TileData;
   coordinates: Coordinates;
-  // styles: any;
+  previousCoordinates?: Coordinates;
 }
 
 /**
@@ -129,16 +137,23 @@ interface TileProps {
  * @param param0
  * @returns
  */
-function Tile({ tile, coordinates }: TileProps) {
+function Tile({ tile, coordinates, previousCoordinates }: TileProps) {
+  console.log(
+    `******************* rerender!!!! tileId=${tile.id}, value=${tile.value}`
+  );
   const { id, value, isNew, isMerge } = tile;
-  // const [scale, setScale] = useState(isNew ? 0 : 1);
   const { gameMode } = useGameModeStore();
   const config = getBoardConfig(gameMode);
   const isStartingNum = STARTING_NUMS.includes(value);
-  const top =
-    coordinates.row * config.tileSize + coordinates.row * config.tileSpacing;
-  const left =
-    coordinates.col * config.tileSize + coordinates.col * config.tileSpacing;
+
+  const currtop = convertCoordinateToPixel(coordinates.row, config);
+  const currleft = convertCoordinateToPixel(coordinates.col, config);
+  const prevTop = previousCoordinates
+    ? convertCoordinateToPixel(previousCoordinates.row, config)
+    : null;
+  const prevLeft = previousCoordinates
+    ? convertCoordinateToPixel(previousCoordinates.col, config)
+    : null;
 
   const scale = useSharedValue(isNew ? 0 : 1);
 
@@ -164,7 +179,17 @@ function Tile({ tile, coordinates }: TileProps) {
     return {
       transform: [
         {
-          scale: scale.value,
+          scale: withTiming(scale.value, { duration: 100 }),
+        },
+        {
+          translateX: withTiming(prevLeft === null ? 0 : currleft - prevLeft, {
+            duration: 100,
+          }),
+        },
+        {
+          translateY: withTiming(prevTop === null ? 0 : currtop - prevTop, {
+            duration: 100,
+          }),
         },
       ],
     };
@@ -187,11 +212,8 @@ function Tile({ tile, coordinates }: TileProps) {
         {
           zIndex: isNew ? 0 : getTileZIndex(),
           position: "absolute",
-          top,
-          left,
-          // transform: `scale(${scale})`,
-          // transitionProperty: "top, left, transform",
-          // transitionDuration: "250ms, 250ms, 100ms",
+          top: prevTop === null ? currtop : prevTop,
+          left: prevLeft === null ? currleft : prevLeft,
         },
       ]}
     >

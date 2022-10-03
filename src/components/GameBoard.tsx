@@ -13,10 +13,13 @@ import { getBoardConfig } from "../utils/utils";
 import Tile from "./Tile";
 
 export default function GameBoard() {
-  const { tileLocations, lastMoveDirection, move } = useGameStore();
+  const { tileLocations, prevTileLocations, move } = useGameStore();
   const { gameMode } = useGameModeStore();
   const { numRows, numCols, tileSize, tileSpacing } = getBoardConfig(gameMode);
   const spacing = `${tileSpacing}px`;
+
+  console.log(`tileLocations=${JSON.stringify(tileLocations)}`);
+  console.log(`prevTileLocations=${JSON.stringify(prevTileLocations)}`);
 
   const gestures = useMemo(() => {
     const up = Gesture.Fling()
@@ -79,9 +82,13 @@ export default function GameBoard() {
         </View>
         {Object.values(tileLocations)
           .reverse()
-          .map((tile) => {
-            return <Tile key={tile.tile.id} {...tile} />;
-          })}
+          .map((tile) => (
+            <Tile
+              key={tile.tile.id}
+              {...tile}
+              previousCoordinates={prevTileLocations[tile.tile.id]?.coordinates}
+            />
+          ))}
       </View>
     </GestureDetector>
   );
