@@ -1,6 +1,6 @@
 import { Coordinates, GameBoardConfig, TileData } from "../types";
 import { colors } from "../theme";
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import {
   MERGABLES,
   STARTING_NUMS,
@@ -137,7 +137,7 @@ interface TileProps {
  * @param param0
  * @returns
  */
-function Tile({ tile, coordinates, previousCoordinates }: TileProps) {
+const Tile = ({ tile, coordinates, previousCoordinates }: TileProps) => {
   console.log(
     `******************* rerender!!!! tileId=${tile.id}, value=${tile.value}`
   );
@@ -173,8 +173,6 @@ function Tile({ tile, coordinates, previousCoordinates }: TileProps) {
     }
   }, [isNew]);
 
-  // TODO - fix animation when moving down or right
-
   const style = useAnimatedStyle(() => {
     return {
       transform: [
@@ -183,12 +181,12 @@ function Tile({ tile, coordinates, previousCoordinates }: TileProps) {
         },
         {
           translateX: withTiming(prevLeft === null ? 0 : currleft - prevLeft, {
-            duration: 100,
+            duration: 1000,
           }),
         },
         {
           translateY: withTiming(prevTop === null ? 0 : currtop - prevTop, {
-            duration: 100,
+            duration: 1000,
           }),
         },
       ],
@@ -220,7 +218,7 @@ function Tile({ tile, coordinates, previousCoordinates }: TileProps) {
       <Text>{value}</Text>
     </Animated.View>
   );
-}
+};
 
 const SMALL_TILE_WITHOUT_BORDER = {
   height: 20,
