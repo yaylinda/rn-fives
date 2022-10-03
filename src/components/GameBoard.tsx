@@ -1,9 +1,3 @@
-import useGameModeStore from "../stores/gameModeStore";
-import useGameStore from "../stores/gameStore";
-import { colors } from "../theme";
-import Tile from "./Tile";
-import { getBoardConfig } from "../utils/utils";
-import { MoveDirection } from "../types";
 import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import {
@@ -11,11 +5,12 @@ import {
   Gesture,
   GestureDetector,
 } from "react-native-gesture-handler";
-import {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
+import useGameModeStore from "../stores/gameModeStore";
+import useGameStore from "../stores/gameStore";
+import { colors } from "../theme";
+import { MoveDirection } from "../types";
+import { getBoardConfig } from "../utils/utils";
+import Tile from "./Tile";
 
 export default function GameBoard() {
   const { tileLocations, lastMoveDirection, move } = useGameStore();

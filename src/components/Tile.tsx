@@ -10,7 +10,12 @@ import {
 import useGameModeStore from "../stores/gameModeStore";
 import { getBoardConfig } from "../utils/utils";
 import { View, Text } from "react-native";
-import Animated from "react-native-reanimated";
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 /**
  * Font sizes
@@ -27,8 +32,8 @@ const FIVE_DIGIT_FONT_SIZE = 10;
  * @returns
  */
 const getTileSize = (isStartingNum: boolean, config: GameBoardConfig) => ({
-  height: isStartingNum ? config.tileSize : config.tileWithBorder,
-  width: isStartingNum ? config.tileSize : config.tileWithBorder,
+  height: config.tileSize,
+  width: config.tileSize,
   borderStyle: isStartingNum ? "none" : "solid",
   borderWidth: isStartingNum ? 0 : config.borderWidth,
 });
@@ -126,7 +131,7 @@ interface TileProps {
  */
 function Tile({ tile, coordinates }: TileProps) {
   const { id, value, isNew, isMerge } = tile;
-  const [scale, setScale] = useState(isNew ? 0 : 1);
+  // const [scale, setScale] = useState(isNew ? 0 : 1);
   const { gameMode } = useGameModeStore();
   const config = getBoardConfig(gameMode);
   const isStartingNum = STARTING_NUMS.includes(value);
@@ -135,23 +140,35 @@ function Tile({ tile, coordinates }: TileProps) {
   const left =
     coordinates.col * config.tileSize + coordinates.col * config.tileSpacing;
 
-  // useEffect(() => {
-  //   if (isMerge) {
-  //     setScale(1.1);
-  //     setTimeout(() => setScale(1), 100);
-  //   }
-  // }, [isMerge]);
+  const scale = useSharedValue(isNew ? 0 : 1);
 
-  // useEffect(() => {
-  //   if (isNew) {
-  //     setTimeout(() => {
-  //       setScale(1.1);
-  //       setTimeout(() => setScale(1), 100);
-  //     }, 100);
-  //   }
-  // }, [isNew]);
+  useEffect(() => {
+    if (isMerge) {
+      scale.value = 1.1;
+      setTimeout(() => (scale.value = 1), 100);
+    }
+  }, [isMerge]);
+
+  useEffect(() => {
+    if (isNew) {
+      setTimeout(() => {
+        scale.value = 1.1;
+        setTimeout(() => (scale.value = 1), 100);
+      }, 100);
+    }
+  }, [isNew]);
 
   // TODO - fix animation when moving down or right
+
+  const style = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: scale.value,
+        },
+      ],
+    };
+  });
 
   const getTileZIndex = () => {
     if (STARTING_NUMS.includes(value)) {
@@ -166,6 +183,7 @@ function Tile({ tile, coordinates }: TileProps) {
         DEFAULT,
         STYLES[`tile_${value}`],
         getTileSize(isStartingNum, config),
+        style,
         {
           zIndex: isNew ? 0 : getTileZIndex(),
           position: "absolute",

@@ -15,8 +15,13 @@ import {
 export const convertBoardToLocations = (
   currentBoard: TileData[][],
   intermediateBoard: IntermediateTileData[][],
-  config: GameBoardConfig,
+  config: GameBoardConfig
 ): TileLocations => {
+  console.log("************ convertBoardToLocations");
+  console.log(`currentBoard=${JSON.stringify(currentBoard)}`);
+  console.log(`intermediateBoard=${JSON.stringify(intermediateBoard)}`);
+  console.log(`config=${JSON.stringify(config)}`);
+
   let tileLocations: TileLocations = {};
 
   for (let row = 0; row < config.numRows; row++) {
@@ -35,6 +40,7 @@ export const convertBoardToLocations = (
     }
   }
 
+  console.log(`tileLocations=${JSON.stringify(tileLocations)}`);
   return tileLocations;
 };
 
